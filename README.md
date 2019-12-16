@@ -1,9 +1,9 @@
-># Secured IOT Socket Server 
+# Secured IOT Socket Server 
 
  - Time based verification
  - TLS/SSL 
  - Device Validation
----
+
 ## ABOUT
 
 IOT Socket Server handle multiple clients (with unique deviceID and its key) simultaneously for bidirectional communication.
