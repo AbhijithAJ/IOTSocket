@@ -14,9 +14,7 @@ IOT devices like Raspberry can also use this module as client with IOTSocketClie
 
 **How is it secured ?**
 
-To prevent Replay attacks and device cloning attacks.
-
-For every data transmission from client to server or vice versa there is a time stamp which is compared with server/client present time. If the time doesn't match (tolerance of -2 sec) or if there is any reused time then socket is closed.
+To prevent Replay attacks and device cloning attacks, every data transmission from client to server or vice versa there is a time stamp which is compared with server/client present time. If the time doesn't match (tolerance of -3 sec) or if there is any reused time then socket is closed.
 
 By using these headers for every transmission, IOT devices over WiFi can also be secured.
 
