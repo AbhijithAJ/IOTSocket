@@ -242,7 +242,7 @@ class IOTSocketServer(object):
                     time_now, frmt) - datetime.strptime(client.last_called, frmt)
                 # To remove Half-Open (Dropped) Connections
                 if time.seconds > 90:   # if client did not send any data for 90 sec close the client
-                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)
+                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ str(client.device_id))
                     del self.connections[fileno]
                     self.listeners.remove(fileno)
             # append client who has data to be sent for
