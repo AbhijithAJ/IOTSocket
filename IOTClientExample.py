@@ -1,8 +1,6 @@
 '''
 Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 
-'''
-'''
 client for raspberry 
 '''
 
