@@ -26,7 +26,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.8',
         'Topic :: IoT :: Server',
-        'Topic :: IoT :: Client',
+        'Topic :: IoT :: Client (for Raspberry)',
         'Intended Audience :: IOT Developers',
         'Intended Audience :: Backend Developers',
         'Operating System :: Linux',
