@@ -1,6 +1,5 @@
 '''
 Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
-
 '''
 import socket
 import ssl
@@ -15,7 +14,6 @@ data_maxLength = 65535
 all_device_ids = []        # to check if device is already existing.
 deviceid_length = 10       # fixed length of device id
 
-
 class IOTSocket(object):
     def __init__(self, server, sock, address):  # each client socket handling
         self.server = server
@@ -29,7 +27,7 @@ class IOTSocket(object):
     
     def DeviceVerify(self, id_, key):  # use fileterrs or hash
         """
-        connect to db and verify if device and key matches
+        connect to DB and verify if the device and key matches
         """
         return 1
 
@@ -49,7 +47,7 @@ class IOTSocket(object):
     def chkTime(self, device_time, server_time):
         """
         Check if the time matches the server time and
-        to make sure there are no reused data
+        to make sure there are no reused data packet (replay attacks)
         """
         frmt = "%H.%M.%S.%f"
         time_drop_max = 3  # packet with time difference 3sec will not be accepted
@@ -225,12 +223,12 @@ class IOTSocketServer(object):
         f = self.read_from_function()                          # read data from pipe as list
         for clientID in f:
             try:
-                # separate client id and data and send to clients
+                # separate client id, data and send to client
                 clientID, snd_data = clientID.split(' ', 1)
                 writers_send_data[int(clientID)] = writers_send_data[int(
                     clientID)] + snd_data if (int(clientID)) in writers_send_data else snd_data
             except Exception as n:
-                pass
+                raise Exception(n,"Invalid data format")
 
         # iterate to all  file no's and check if any data is to be sent
         for fileno in self.listeners:
@@ -242,7 +240,7 @@ class IOTSocketServer(object):
                     time_now, frmt) - datetime.strptime(client.last_called, frmt)
                 # To remove Half-Open (Dropped) Connections
                 if time.seconds > 90:   # if client did not send any data for 90 sec close the client
-                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ str(client.device_id))
+                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)
                     del self.connections[fileno]
                     self.listeners.remove(fileno)
             # append client who has data to be sent for

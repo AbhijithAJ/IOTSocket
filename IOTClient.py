@@ -13,12 +13,13 @@ host = '127.0.0.1'
 port = 9000
 device_id = '1234567890'
 device_key ='1432qrzd23'
-certfile_path = "/root/cert.pem"      # for key pinning (certificate pinning)
+certfile_path = "/user/cert.pem"      # for key pinning (certificate pinning)
 prev_call = 0
 
 def someThingtoSend():
     '''
-    read data from sensor for every 10 sec 
+    this function is called recursively.
+    read data from sensor and return data
     '''
     global prev_call
     now = time.time()
@@ -30,11 +31,15 @@ def someThingtoSend():
         return ''
 
 def handleCmdsFromServer(data):
+    '''
+    This function is called when ever there is 
+    data/command from the server.
+    '''
     print(data)
 
 while 1: # reconnect if socket is closed
     try:
-        sock.connectionSet(host,port,device_id,device_key,Encrypt=True, cert_path= certfile_path)  # set IOT Socket connection with valid Device ID and Key. 
+        sock.connectionSet(host,port,device_id,device_key,Encrypt=False, cert_path= certfile_path)  # set IOT Socket connection with valid Device ID and Key.
         # Continiously check for receiving / tansmiting of data
         while 1:
             data = someThingtoSend()

@@ -1,19 +1,34 @@
-from distutils.core import setup
+"""Setup for the IOTSocket package."""
 
-setup(
+import setuptools
+
+with open('README.md') as f:
+    README = f.read()
+
+setuptools.setup(
+    author="ABHIJITH BOPPE",
+    author_email="abhijithas.eh@gmail.com",
     name='IOTSocket',
-    version='1.3',
-    author='Abhijith Boppe',
-    author_email='abhijithas.eh@gmail.com',
+    license="MIT",
+    description='IOTSocket is for IOT to make bidirectional full-duplex comunications securely from client and server side',
+    version='v0.3',
+    long_description=README,
+    url='https://github.com/AbhijithAJ/IOT-Socket',
     packages=['IOTSocket'],
-    url='https://github.com/AbhijithAJ/IOTSocket',
-    description='It is a secured IOT persistant bidirectional communication socket server written in Python',
-    long_description_content_type='text/markdown',
-    long_description=open('README.md').read(),
+    python_requires=">=3.2",
+    install_requires=['requests'],
     classifiers=[
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: Linux, Windows",
+        # Trove classifiers
+        # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)
+        'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.8',
+        'Topic :: IoT :: Server',
+        'Topic :: IoT :: Client',
+        'Intended Audience :: IOT Developers',
+        'Intended Audience :: Backend Developers',
+        'Operating System :: Linux',
     ],
 )
