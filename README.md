@@ -30,7 +30,7 @@ By using these headers for every transmission, IOT devices over WiFi can also be
 ### Installation
 You can install IOTSocket by running the following command
 ```
-sudo python setup.py install
+pip install IOTSocket
 ```
 ### Example Server
 ```python

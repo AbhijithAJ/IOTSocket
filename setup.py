@@ -10,13 +10,13 @@ setuptools.setup(
     author_email="abhijithas.eh@gmail.com",
     name='IOTSocket',
     license="MIT",
-    description='IOTSocket is for IOT to make bidirectional full-duplex comunications securely from client and server side',
-    version='v0.3',
+    description='to make bidirectional full-duplex comunications securely for iot devices',
+    version='v0.3.3',
     long_description=README,
-    url='https://github.com/AbhijithAJ/IOT-Socket',
-    packages=['IOTSocket'],
+    long_description_content_type='text/markdown',
+    url='https://github.com/AbhijithAJ/IOTSocket',
+    packages=setuptools.find_packages(),
     python_requires=">=3.2",
-    install_requires=['requests'],
     classifiers=[
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)
@@ -25,10 +25,8 @@ setuptools.setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.8',
-        'Topic :: IoT :: Server',
-        'Topic :: IoT :: Client (for Raspberry)',
-        'Intended Audience :: IOT Developers',
-        'Intended Audience :: Backend Developers',
-        'Operating System :: Linux',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Intended Audience :: Developers',
+        'Operating System :: Unix',
     ],
 )
