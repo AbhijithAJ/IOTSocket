@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Generic badge](https://img.shields.io/badge/Made_By-ABHIJITH_BOPPE-BLUE.svg)](https://www.linkedin.com/in/abhijith-boppe/)  
-[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Generic badge](https://img.shields.io/badge/pypi_package-0.3.3-DARKGREEN.svg)](https://pypi.org/project/IOTSocket/) [![Generic badge](https://img.shields.io/badge/Twitter-abhijithboppe-ORANGE.svg)](https://twitter.com/abhijithboppe) [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/AbhijithAJ/IOTSocket/blob/master/LICENSE)   
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![Generic badge](https://img.shields.io/badge/pypi_package-0.3.3-DARKGREEN.svg)](https://pypi.org/project/IOTSocket/) [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/AbhijithAJ/IOTSocket/blob/master/LICENSE)   
 </div>
 
 
