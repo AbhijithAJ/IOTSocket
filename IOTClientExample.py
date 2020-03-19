@@ -48,4 +48,5 @@ while 1: # reconnect if socket is closed
                 handleCmdsFromServer(rcv_data)   # handle your data here
 
     except Exception as n:
+        s.s.close()
         print(n)
