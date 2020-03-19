@@ -49,7 +49,7 @@ while 1: # reconnect if socket is closed
 
     except Exception as n:
         try:
-            s.s.close()
+            sock.sock.close()
         except:
             pass
         print(n)
