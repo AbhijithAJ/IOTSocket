@@ -14,9 +14,10 @@ device_key = ''
 time_stamps = []
 
 def connectionSet(host, port, id_, key, Encrypt=1, cert_path=None):
-    global sock, device_id, device_key
+    global sock, device_id, device_key, time_stamps
     device_id = id_
     device_key = key
+    time_stamps = []
     sock = socket.create_connection((host, port))
     if Encrypt == 1:
         ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT).load_verify_locations(cert_path)
