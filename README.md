@@ -179,11 +179,14 @@ while 1: # reconnect if socket is closed
 
 ### Additional Information
 
-There is no hand shake. Connection is established directly on 1st request from client. Make sure the client and server time are in sync.
+Connection is established directly on 1st request from client. Make sure the client and server time are in sync.
 
 Read/Write to your application from using fifo named pipe recursively without closing. 
 
 Please go through the code for better understanding of the protocol.
+
+<br>
+<a href="https://www.buymeacoffee.com/abhijithboppe" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" width="55%"></a>
 
 ---
 ## License & copyright
