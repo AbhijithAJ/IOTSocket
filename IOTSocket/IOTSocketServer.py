@@ -105,8 +105,6 @@ class IOTSocket(object):
                 "ERROR: Incorrect IOT version detected "+str(values)+' '+str(self.device_id))
 
     def _handleData(self):
-        # time_now = str(datetime.now().time())           # 15:13:54.420103
-        # time_now = time_now.replace(':', '.')
         time_now = f'{time.time():.4f}'
         self.last_called = float(time_now)
         try:  # 65535 max data (including headers)
