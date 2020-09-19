@@ -20,10 +20,10 @@ def someThingtoSend():
     read data from sensor and return data
     '''
     global prev_call
-    now = time.time()
-    if ((now - prev_call) > 10) or prev_call == 0:
+    time_now = time.time()
+    if (abs(time_now - prev_call) > 10) or prev_call == 0:
         example = 'temp=33.5&humid=40%'
-        prev_call = now
+        prev_call = time_now
         return example
     else:
         return ''

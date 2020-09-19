@@ -59,15 +59,15 @@ class IOTSocket(object):
         else:            
             if(len(self.time_stamps) < 333):
                 # block if more than 333 req are observed in time
-                time = abs(server_time - device_time)
+                time_diff = abs(server_time - device_time)
                 # to remove old time stamps (to reduce memory usage)
                 if len(self.time_stamps) > 1:
                     if (abs(self.time_stamps[-1] - server_time) > time_drop_max):
                         self.time_stamps = []
                 # check time difference
-                if (time > time_drop_max):
+                if (time_diff > time_drop_max):
                     return 0
-                elif (time < time_drop_max):
+                elif (time_diff < time_drop_max):
                     self.time_stamps.append(device_time)
                     return 1
             else:
@@ -230,9 +230,9 @@ class IOTSocketServer(object):
                 continue
             client = self.connections[fileno]
             if client.last_called != '':
-                time = abs(time_now - client.last_called)
+                time_diff = abs(time_now - client.last_called)
                 # To remove Half-Open (Dropped) Connections
-                if time > 90:   # if client did not send any data for 90 sec close the client
+                if time_diff > 90:   # if client did not send any data for 90 sec close the client
                     self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)
                     del self.connections[fileno]
                     self.listeners.remove(fileno)

@@ -37,13 +37,13 @@ def chkTime(server_time, device_time):
         return False
     else:
         if len(time_stamps) < 100:
-            time = abs(device_time - server_time)
+            time_diff = abs(device_time - server_time)
             if len(time_stamps) > 1:           # to remove old time stamps (to reduce memory usage)
                 if (abs(time_stamps[-1] - server_time) > time_drop_max):
                     time_stamps = []
-            if (time > time_drop_max):
+            if (time_diff > time_drop_max):
                 return 0
-            elif (time < time_drop_max):
+            elif (time_diff < time_drop_max):
                 time_stamps.append(server_time)
                 return 1
         else:
