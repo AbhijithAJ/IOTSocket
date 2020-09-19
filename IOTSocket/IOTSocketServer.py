@@ -59,13 +59,9 @@ class IOTSocket(object):
         else:            
             if(len(self.time_stamps) < 333):
                 # block if more than 333 req are observed in time
-                # time = datetime.strptime(
-                #     server_time, frmt) - datetime.strptime(device_time, frmt)
                 time = server_time - device_time
                 # to remove old time stamps (to reduce memory usage)
                 if len(self.time_stamps) > 1:
-                    # stamps_time = datetime.strptime(
-                    #     self.time_stamps[-1], frmt) - datetime.strptime(server_time, frmt)
                     stamps_time = self.time_stamps[-1] - server_time
                     if (stamps_time.seconds > time_drop_max):
                         self.time_stamps = []
@@ -141,7 +137,6 @@ class IOTSocket(object):
     def _sendBuffer(self, buff, send_all=False):
         # send data to client
         time_now = f'{time.time():.4f}'
-        # time_now = time_now.replace(':', '.')
         headers = '''
 IOT:1.1
 DATE:24/7/2019
@@ -236,8 +231,6 @@ class IOTSocketServer(object):
                 continue
             client = self.connections[fileno]
             if client.last_called != '':
-                # time = datetime.strptime(
-                # time_now, frmt) - datetime.strptime(client.last_called, frmt)
                 time = time_now - client.last_called
                 # To remove Half-Open (Dropped) Connections
                 if time > 90:   # if client did not send any data for 90 sec close the client
