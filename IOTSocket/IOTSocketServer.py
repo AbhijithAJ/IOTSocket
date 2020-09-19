@@ -6,7 +6,7 @@ import ssl
 import errno
 import time
 
-from datetime import datetime
+#from datetime import datetime
 from select import select
 
 fields_maxLength = 1024
@@ -59,11 +59,10 @@ class IOTSocket(object):
         else:            
             if(len(self.time_stamps) < 333):
                 # block if more than 333 req are observed in time
-                time = server_time - device_time
+                time = abs(server_time - device_time)
                 # to remove old time stamps (to reduce memory usage)
                 if len(self.time_stamps) > 1:
-                    stamps_time = self.time_stamps[-1] - server_time
-                    if (stamps_time.seconds > time_drop_max):
+                    if (abs(self.time_stamps[-1] - server_time) > time_drop_max):
                         self.time_stamps = []
                 # check time difference
                 if (time > time_drop_max):
@@ -231,7 +230,7 @@ class IOTSocketServer(object):
                 continue
             client = self.connections[fileno]
             if client.last_called != '':
-                time = time_now - client.last_called
+                time = abs(time_now - client.last_called)
                 # To remove Half-Open (Dropped) Connections
                 if time > 90:   # if client did not send any data for 90 sec close the client
                     self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)

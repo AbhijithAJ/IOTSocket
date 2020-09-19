@@ -4,7 +4,7 @@ Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 '''
 import socket
 import ssl
-from datetime import datetime
+import time
 
 data_maxLength = 65535
 fields_maxLength =1024
@@ -24,37 +24,36 @@ def connectionSet(host, port, id_, key, Encrypt=1, cert_path=None):
         sock = ssl.wrap_socket(sock, keyfile=None, certfile=None, server_side=False, cert_reqs=ssl.CERT_NONE, ssl_version=ssl.PROTOCOL_SSLv23)
     sock.settimeout(1)
 
-def chkTime(device_time, server_time):
+def chkTime(server_time, device_time):
     """
     Check if the time matches the server time and 
-    to make sure there are no reused data 
+    to make sure there are no reused time (no replay attacks) 
     """
     global time_stamps
-    frmt = "%H.%M.%S.%f"
     time_drop_max = 3  # packet with time difference 30sec will not be accepted
-    if(device_time in time_stamps):
+    device_time = float(device_time)
+    server_time = float(server_time)
+    if(server_time in time_stamps):
         return False
     else:
         if len(time_stamps) < 100:
-            time = datetime.strptime(
-                device_time , frmt) - datetime.strptime(server_time, frmt)
+            time = abs(device_time - server_time)
             if len(time_stamps) > 1:           # to remove old time stamps (to reduce memory usage)
-                stamps_time = datetime.strptime(
-                    time_stamps[-1], frmt) - datetime.strptime(server_time, frmt)
-                if (stamps_time.seconds > time_drop_max):
+                if (abs(time_stamps[-1] - server_time) > time_drop_max):
                     time_stamps = []
-            if (time.seconds > time_drop_max):
+            if (time > time_drop_max):
                 return 0
-            elif (time.seconds < time_drop_max):
-                time_stamps.append(device_time)
+            elif (time < time_drop_max):
+                time_stamps.append(server_time)
                 return 1
         else:
             raise Exception(
-                "ERROR: DOS attack more than 300 req from "+str(device_id))
+                "ERROR: DOS attack more than 100 req from "+str(device_id))
 
 def recvData():
-    time_now = str(datetime.now().time())           # 15:13:54.420103
-    time_now = time_now.replace(':', '.')
+    # time_now = str(datetime.now().time())           # 15:13:54.420103
+    # time_now = time_now.replace(':', '.')
+    time_now = f'{time.time():.4f}'
     try:
         # 65535 max data (including headers)
         data = sock.recv(data_maxLength)
@@ -68,7 +67,8 @@ def recvData():
         return ''
     else:
         data = data.split('|#|')   # split data at delimeter
-        del data[-1]
+        while '' in data:
+            data.remove('')
         for data in data:
             # split headers and data
             fields, data = data.split("\r\n\r\n", 1)
@@ -96,8 +96,7 @@ def recvData():
                         "ERROR: Incorrect IOT version detected ")
                         
 def _headers():
-    time_now = str(datetime.now().time())
-    time_now = time_now.replace(':','.')
+    time_now = f'{time.time():.4f}'
     headers = '''IOT:1.1
 DATE:12/12/2019
 TIME:{time_now}
