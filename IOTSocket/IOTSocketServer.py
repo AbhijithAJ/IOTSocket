@@ -48,7 +48,7 @@ class IOTSocket(object):
     def chkTime(self, device_time, server_time):
         """
         Check if the time matches the server time and
-        to make sure there are no reused data packet (replay attacks)
+        to make sure there are no reused data packet (no replay attacks)
         """
         frmt = "%H.%M.%S.%f"
         time_drop_max = 3  # packet with time difference 3sec will not be accepted
