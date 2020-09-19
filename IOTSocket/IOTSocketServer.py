@@ -4,6 +4,7 @@ Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 import socket
 import ssl
 import errno
+import time
 
 from datetime import datetime
 from select import select
@@ -51,23 +52,27 @@ class IOTSocket(object):
         """
         frmt = "%H.%M.%S.%f"
         time_drop_max = 3  # packet with time difference 3sec will not be accepted
+        device_time = float(f'{device_time:.4f}')
+        server_time = float(f'{server_time:.4f}')
         if(device_time in self.time_stamps):
             return False
-        else:
-            # block if more than 333 req are observed in time
+        else:            
             if(len(self.time_stamps) < 333):
-                time = datetime.strptime(
-                    server_time, frmt) - datetime.strptime(device_time, frmt)
+                # block if more than 333 req are observed in time
+                # time = datetime.strptime(
+                #     server_time, frmt) - datetime.strptime(device_time, frmt)
+                time = server_time - device_time
                 # to remove old time stamps (to reduce memory usage)
                 if len(self.time_stamps) > 1:
-                    stamps_time = datetime.strptime(
-                        self.time_stamps[-1], frmt) - datetime.strptime(server_time, frmt)
+                    # stamps_time = datetime.strptime(
+                    #     self.time_stamps[-1], frmt) - datetime.strptime(server_time, frmt)
+                    stamps_time = self.time_stamps[-1] - server_time
                     if (stamps_time.seconds > time_drop_max):
                         self.time_stamps = []
                 # check time difference
-                if (time.seconds > time_drop_max):
+                if (time > time_drop_max):
                     return 0
-                elif (time.seconds < time_drop_max):
+                elif (time < time_drop_max):
                     self.time_stamps.append(device_time)
                     return 1
             else:
@@ -100,9 +105,10 @@ class IOTSocket(object):
                 "ERROR: Incorrect IOT version detected "+str(values)+' '+str(self.device_id))
 
     def _handleData(self):
-        time_now = str(datetime.now().time())           # 15:13:54.420103
-        time_now = time_now.replace(':', '.')
-        self.last_called = time_now
+        # time_now = str(datetime.now().time())           # 15:13:54.420103
+        # time_now = time_now.replace(':', '.')
+        time_now = f'{time.time():.4f}'
+        self.last_called = float(time_now)
         try:  # 65535 max data (including headers)
             data = self.client.recv(data_maxLength)
         except Exception as n:
@@ -136,8 +142,8 @@ class IOTSocket(object):
 
     def _sendBuffer(self, buff, send_all=False):
         # send data to client
-        time_now = str(datetime.now().time())
-        time_now = time_now.replace(':', '.')
+        time_now = f'{time.time():.4f}'
+        # time_now = time_now.replace(':', '.')
         headers = '''
 IOT:1.1
 DATE:24/7/2019
@@ -212,11 +218,6 @@ class IOTSocketServer(object):
         client.handleClose(error)
 
     def serveonce(self):
-        # import pymysql
-        frmt = "%H.%M.%S.%f"
-        # 15:13:54.420103
-        time_now = str(datetime.now().time())
-        time_now = time_now.replace(':', '.')
         writers = []
         writers_send_data = {}
         # get actions of all requested clients
@@ -231,15 +232,17 @@ class IOTSocketServer(object):
                 raise Exception(n,"Invalid data format")
 
         # iterate to all  file no's and check if any data is to be sent
+        time_now = float(f'{time.time():.4f}')
         for fileno in self.listeners:
             if fileno == self.serversocket:
                 continue
             client = self.connections[fileno]
             if client.last_called != '':
-                time = datetime.strptime(
-                    time_now, frmt) - datetime.strptime(client.last_called, frmt)
+                # time = datetime.strptime(
+                # time_now, frmt) - datetime.strptime(client.last_called, frmt)
+                time = time_now - client.last_called
                 # To remove Half-Open (Dropped) Connections
-                if time.seconds > 90:   # if client did not send any data for 90 sec close the client
+                if time > 90:   # if client did not send any data for 90 sec close the client
                     self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)
                     del self.connections[fileno]
                     self.listeners.remove(fileno)
