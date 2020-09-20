@@ -34,9 +34,10 @@ def chkTime(server_time, device_time):
     device_time = float(device_time)
     server_time = float(server_time)
     if(server_time in time_stamps):
+        raise Exception(f"ERROR: Replay attack observer. Time stamps:{time_stamps}, Replayed time: {server_time}")
         return False
     else:
-        if len(time_stamps) < 100:
+        if len(time_stamps) < 100: # if 100 req in less than 30sec  
             time_diff = abs(device_time - server_time)
             if len(time_stamps) > 1:           # to remove old time stamps (to reduce memory usage)
                 if (abs(time_stamps[-1] - server_time) > time_drop_max):
@@ -48,11 +49,9 @@ def chkTime(server_time, device_time):
                 return 1
         else:
             raise Exception(
-                "ERROR: DOS attack more than 100 req from "+str(device_id))
+                "ERROR: DOS attack more than 100 requests from server in 30sec")
 
 def recvData():
-    # time_now = str(datetime.now().time())           # 15:13:54.420103
-    # time_now = time_now.replace(':', '.')
     time_now = f'{time.time():.4f}'
     try:
         # 65535 max data (including headers)
@@ -69,7 +68,8 @@ def recvData():
         data = data.split('|#|')   # split data at delimeter
         while '' in data:
             data.remove('')
-        for data in data:
+        if data[0]:       # clear the remaining queue/buffer and read only first element/data
+            data = data[0]
             # split headers and data
             fields, data = data.split("\r\n\r\n", 1)
             fields, data = fields.strip() if len(
@@ -82,7 +82,7 @@ def recvData():
                 if len(headers) > 10:
                     break
             if len(headers) != 5 or len(data) < 5:
-                raise Exception("ERROR: Headers issue ")
+                raise Exception("ERROR: Header length issue ")
             else:
                 if(headers['IOT'] == '1.1'):
                     time_chk = chkTime(headers['TIME'], time_now)
@@ -90,10 +90,10 @@ def recvData():
                         return data
                     else:
                         raise Exception(
-                            "ERROR: Incorrect time stamp "+headers['TIME'])
+                            f"ERROR: Incorrect time stamp. server time {headers['TIME']} client time {time_now}")
                 else:
                     raise Exception(
-                        "ERROR: Incorrect IOT version detected ")
+                        f"ERROR: Incorrect IOT version detected {headers['IOT']}")
                         
 def _headers():
     time_now = f'{time.time():.4f}'
@@ -114,8 +114,8 @@ def sendData(data):
             data = headers.replace('\n','\r\n') + data.replace('|#|','') + '|#|'
             sock.send(data.encode())      
         except socket.timeout as e:
-            print (e)
+            raise Exception("Socket time out")
         except Exception as e:
-            raise Exception("socket closed by server")
+            raise Exception("Socket closed by server")
 
 # ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)

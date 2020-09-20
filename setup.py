@@ -1,21 +1,26 @@
 """Setup for the IOTSocket package."""
 
-import setuptools
+from setuptools import setup, Extension
+
 
 with open('README.md') as f:
     README = f.read()
-
-setuptools.setup(
+ 
+setup(
     author="ABHIJITH BOPPE",
     author_email="abhijithas.eh@gmail.com",
     name='IOTSocket',
     license="MIT",
-    description='to make bidirectional full-duplex comunications securely for iot devices',
-    version='v0.3.3',
+    description='To make bidirectional full-duplex comunications securely for iot devices',
+    version='v1.0',
     long_description=README,
     long_description_content_type='text/markdown',
     url='https://github.com/AbhijithAJ/IOTSocket',
-    packages=setuptools.find_packages(),
+    keywords=['iotsocket', 'websocket', 'IOT', 'bidirectional', 'full duplex',
+              'iotclient', 'iotserver', 'multiple devices', 'persistent socket','live socket','ssl','secured','replay attacks'],
+    download_url='https://github.com/AbhijithAJ/clrprint/archive/0.1.1.tar.gz',
+    packages=['IOTSocket'],
+    install_requires=['clrprint'],
     python_requires=">=3.2",
     classifiers=[
         # Trove classifiers

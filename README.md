@@ -17,7 +17,7 @@
 ## ABOUT
 
 IOT Socket Server handle multiple clients (with unique deviceID and its key) simultaneously for bidirectional communication.
-It is similar to websocket. Here we can handle each client individually from there device id.
+It is similar to WebSocket. Here we can handle each client individually from there device id.
 
 IOT devices like Raspberry can also use this module as client with IOTSocketClient module.
 
@@ -33,7 +33,7 @@ By using these headers for every transmission, IOT devices over WiFi can also be
 *NOTE:*
 - Make sure the device time is in sync with server time (use RTC)
 - Re-establish client socket connection every 24 hours
-- SSL key pinning on client side.
+- SSL key pinning on client-side.
 - Verify device id and key from database
 - Client socket will be closed if there is no data for 90 sec
 
@@ -49,6 +49,7 @@ Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 '''
 from IOTSocket import IOTSocketServer, IOTSocketServerSSL, IOTSocket
 import time
+from clrprint import *
 
 host = "127.0.0.1"
 port = 9000
@@ -81,8 +82,7 @@ class handleEachClientHere(IOTSocket):
         Verify whether device id and key matches in database records
         and check if it is activated.
         (Check from DB)
-        '''
-        
+        '''        
         return 1    #return True if verified successfully else false
 
     def handleMessage(self, id_, data):
@@ -91,12 +91,11 @@ class handleEachClientHere(IOTSocket):
         create a fifo named pipe and pass the data to your
         backed application
 
-        (make sure u remove delimeters and other vulnerable strings which effect the backend application)
+        (make sure u remove delimiters and other vulnerable strings which effect the backend application)
         '''
-
         for i in lst_of_data_to_remove:         # remove delimiters/data, if any are present in client data to prevent clashes
             data.replace(i, '')
-        print(id_, data)
+        clrprint(id_, data,clr='b')
 
     def handleClose(self, error_repo=''):
         '''
@@ -104,14 +103,12 @@ class handleEachClientHere(IOTSocket):
         error start with "ERROR: "
         and normal socket close will end with normal message
         '''
-
         if "ERROR:" in str(error_repo):
-            print(error_repo)
+            clrprint(error_repo,clr='r')
         else:
             pass
-            #print(error_repo)
 
-
+clrprint(f"Server started listening on socket {host}:{port}", clr='g')
 server = IOTSocketServer(host, port, from_server_to_client,handleEachClientHere)        # without ssl
 # server = IOTSocketServerSSL(host, port, from_server_to_client, handleEachClientHere, certfile = certfile_path, keyfile = keyfile_path)
 server.serveforever()
@@ -122,11 +119,12 @@ server.serveforever()
 '''
 Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 
-client for raspberry 
+client example for raspberry 
 '''
 
 from IOTSocket import IOTSocketClient as sock
 import time
+from clrprint import *
 
 host = '127.0.0.1'
 port = 9000
@@ -141,10 +139,10 @@ def someThingtoSend():
     read data from sensor and return data
     '''
     global prev_call
-    now = time.time()
-    if ((now - prev_call) > 10) or prev_call == 0:
+    time_now = time.time()
+    if (abs(time_now - prev_call) > 10) or prev_call == 0: # send sensor data every 10 seconds
         example = 'temp=33.5&humid=40%'
-        prev_call = now
+        prev_call = time_now
         return example
     else:
         return ''
@@ -154,12 +152,14 @@ def handleCmdsFromServer(data):
     This function is called when ever there is 
     data/command from the server.
     '''
-    print(data)
+    clrprint(data,clr='b')
 
 while 1: # reconnect if socket is closed
     try:
+        clrprint(f"\nEstablishing socket connection to {host}:{port}",clr='y')
         sock.connectionSet(host,port,device_id,device_key,Encrypt=False, cert_path= certfile_path)  # set IOT Socket connection with valid Device ID and Key.
-        # Continiously check for receiving / tansmiting of data
+        # Continuously check for receiving / transmitting of data
+        clrprint(f"Connection established successfully",clr='g')
         while 1:
             data = someThingtoSend()
             if data != '':
@@ -169,24 +169,28 @@ while 1: # reconnect if socket is closed
                 handleCmdsFromServer(rcv_data)   # handle your data here
 
     except Exception as n:
-        sock.sock.close()
-        print(n)
-    except:
-        pass
-
+        clr = 'r' if "ERROR:" in str(n) else 'y'
+        clrprint(n,clr='r')
+        clrprint('closing socket',clr='y')      
+        try:
+            sock.sock.close()
+        except:
+            pass
+        time.sleep(10)
+        
 
 ```
 
 ### Additional Information
 
-Connection is established directly on 1st request from client. Make sure the client and server time are in sync.
+The connection is established directly on 1st request from client. Make sure the client and server time are in sync.
 
 Read/Write to your application from using fifo named pipe recursively without closing. 
 
 Please go through the code for better understanding of the protocol.
 
 <br>
-<a href="https://www.buymeacoffee.com/abhijithboppe" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" width="55%"></a>
+<a href="https://www.buymeacoffee.com/abhijithboppe" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" width="55%" ></a>
 
 ---
 ## License & copyright

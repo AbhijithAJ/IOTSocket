@@ -50,10 +50,9 @@ class IOTSocket(object):
         Check if the time matches the server time and
         to make sure there are no reused data packet (no replay attacks)
         """
-        frmt = "%H.%M.%S.%f"
         time_drop_max = 3  # packet with time difference 3sec will not be accepted
-        device_time = float(f'{device_time:.4f}')
-        server_time = float(f'{server_time:.4f}')
+        device_time = float(f"{device_time[:device_time.index('.')+5]}")
+        server_time = float(f"{server_time[:server_time.index('.')+5]}")
         if(device_time in self.time_stamps):
             return False
         else:            
@@ -76,6 +75,7 @@ class IOTSocket(object):
 
 
     def verifyHeaders(self, headers, values, time_now):
+        values = ', '.join(values.split(' '))
         if(headers['IOT'] == '1.1'):
             if(self.chkTime(headers['TIME'], time_now)):  # check time
                 if(self.device_id == '' and len(headers['DEVICE']) == deviceid_length and int(headers['DEVICE']) not in all_device_ids):
@@ -85,19 +85,19 @@ class IOTSocket(object):
                         all_device_ids.append(int(self.device_id))
                     else:
                         raise Exception(
-                            "ERROR: Invalid Device key "+str(values)+' '+str(self.device_id))
+                            f"ERROR: Invalid Device key. Headers: '{str(values)}' from device {str(self.device_id)}")
                 # close socket if device id is changed after 1st request
                 if(int(headers['DEVICE']) != self.device_id):
                     raise Exception(
-                        "ERROR: Invalid Device ID "+str(values)+' '+str(self.device_id))
+                        f"ERROR: Device ID cloning. Headers: '{str(values)}' from device {str(self.device_id)}")
                 else:
                     return 1
             else:
                 raise Exception(
-                    "ERROR: Incorrect time stamp "+str(values)+' '+str(self.device_id))
+                    f"ERROR: Incorrect time stamp. Headers: '{str(values)}' from device {str(self.device_id)} by time {time_now}")
         else:
             raise Exception(
-                "ERROR: Incorrect IOT version detected "+str(values)+' '+str(self.device_id))
+                f"ERROR: Incorrect IOT version detected. Headers: '{str(values)}' from device {str(self.device_id)}")
 
     def _handleData(self):
         time_now = f'{time.time():.4f}'
@@ -111,9 +111,11 @@ class IOTSocket(object):
             raise Exception("remote socket closed "+str(self.device_id))
         else:
             data = data.split('|#|')   # split data at delimeter
-            del data[-1]
+            while '' in data:
+                data.remove('')
             # split headers and data
             for data in data:
+                print('.',end='')
                 fields, data = data.split("\r\n\r\n", 1)
                 fields, data = fields.strip() if len(
                     fields) < fields_maxLength else 0, data.strip() if len(data) < (data_maxLength-3000) else 0
@@ -128,8 +130,7 @@ class IOTSocket(object):
                         break
                 values = values.strip()
                 if len(headers) != 5 or len(data) < 5:
-                    raise Exception("ERROR: Headers issue " +
-                                    str(values)+' '+str(self.device_id))
+                    raise Exception(f"ERROR: Headers issue. Headers: '{str(values)}' from device {str(self.device_id)}")
                 elif(self.verifyHeaders(headers, values, time_now)):
                     self.handleMessage(self.device_id, data)
 
@@ -233,7 +234,7 @@ class IOTSocketServer(object):
                 time_diff = abs(time_now - client.last_called)
                 # To remove Half-Open (Dropped) Connections
                 if time_diff > 90:   # if client did not send any data for 90 sec close the client
-                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ client.device_id)
+                    self._handleClose(client, 'ERROR: Removing half opened/Dropped connections'+ str(client.device_id))
                     del self.connections[fileno]
                     self.listeners.remove(fileno)
             # append client who has data to be sent for

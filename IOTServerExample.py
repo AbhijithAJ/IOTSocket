@@ -3,6 +3,7 @@ Developed by Abhijith Boppe - linkedin.com/in/abhijith-boppe/
 '''
 from IOTSocket import IOTSocketServer, IOTSocketServerSSL, IOTSocket
 import time
+from clrprint import *
 
 host = "127.0.0.1"
 port = 9000
@@ -23,7 +24,7 @@ def from_server_to_client():
     to write into it and you return a list. Like: ['id1 data1', 'id2 data2', 'id3 data3', .....]
 
     Ex: ['23234 ON SWITCH 1','23235 OFF LIGHT','232365 GET ALL SENSOR VALUES']
-    (id must be numaric values only)
+    (id must be numeric values only)
     
     '''
     return []
@@ -35,8 +36,7 @@ class handleEachClientHere(IOTSocket):
         Verify whether device id and key matches in database records
         and check if it is activated.
         (Check from DB)
-        '''
-        
+        '''        
         return 1    #return True if verified successfully else false
 
     def handleMessage(self, id_, data):
@@ -47,10 +47,9 @@ class handleEachClientHere(IOTSocket):
 
         (make sure u remove delimeters and other vulnerable strings which effect the backend application)
         '''
-
         for i in lst_of_data_to_remove:         # remove delimiters/data, if any are present in client data to prevent clashes
             data.replace(i, '')
-        print(id_, data)
+        clrprint(id_, data,clr='b')
 
     def handleClose(self, error_repo=''):
         '''
@@ -58,14 +57,12 @@ class handleEachClientHere(IOTSocket):
         error start with "ERROR: "
         and normal socket close will end with normal message
         '''
-
         if "ERROR:" in str(error_repo):
-            print(error_repo)
+            clrprint(error_repo,clr='r')
         else:
             pass
-            #print(error_repo)
 
-
+clrprint(f"Server started listening on socket {host}:{port}", clr='g')
 server = IOTSocketServer(host, port, from_server_to_client,handleEachClientHere)        # without ssl
 # server = IOTSocketServerSSL(host, port, from_server_to_client, handleEachClientHere, certfile = certfile_path, keyfile = keyfile_path)
 server.serveforever()
