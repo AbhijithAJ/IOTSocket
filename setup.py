@@ -18,7 +18,7 @@ setup(
     url='https://github.com/AbhijithAJ/IOTSocket',
     keywords=['iotsocket', 'websocket', 'IOT', 'bidirectional', 'full duplex',
               'iotclient', 'iotserver', 'multiple devices', 'persistent socket','live socket','ssl','secured','replay attacks'],
-    download_url='https://github.com/AbhijithAJ/clrprint/archive/0.1.1.tar.gz',
+    download_url='https://github.com/AbhijithAJ/IOTSocket/archive/1.0.tar.gz',
     packages=['IOTSocket'],
     install_requires=['clrprint'],
     python_requires=">=3.2",
