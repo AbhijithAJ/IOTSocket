@@ -73,7 +73,7 @@ def recvData():
             # split headers and data
             fields, data = data.split("\r\n\r\n", 1)
             fields, data = fields.strip() if len(
-                fields) < fields_maxLength else 0, data.strip() if len(data) < (data_maxLength-3000) else 0
+                fields) < fields_maxLength else 0, data.strip() if len(data) < (data_maxLength-3000) else ''
             headers = {}
             for field in fields.split('\r\n'):
                 # split each line by http field name and value
